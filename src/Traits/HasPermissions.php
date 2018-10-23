@@ -260,12 +260,12 @@ trait HasPermissions
      *
      * @return $this
      */
-    public function givePermissionTo($company_id, ...$permissions)
+    public function givePermissionTo(...$permissions)
     {
         $permissions = collect($permissions)
             ->flatten()
             ->map(function ($permission) {
-                return $this->getStoredPermission($permission, $company_id);
+                return $this->getStoredPermission($permission);
             })
             ->filter(function ($permission) {
                 return $permission instanceof Permission;
@@ -301,11 +301,11 @@ trait HasPermissions
      *
      * @return $this
      */
-    public function syncPermissions($company_user, ...$permissions)
+    public function syncPermissions(...$permissions)
     {
         $this->permissions()->detach();
 
-        return $this->givePermissionTo($company_user, $permissions);
+        return $this->givePermissionTo($permissions);
     }
 
     /**
@@ -329,24 +329,9 @@ trait HasPermissions
      *
      * @return \Spatie\Permission\Contracts\Permission|\Spatie\Permission\Contracts\Permission[]|\Illuminate\Support\Collection
      */
-    protected function getStoredPermission($permissions, $company_id = null)
+    protected function getStoredPermission($permissions)
     {
         $permissionClass = $this->getPermissionClass();
-
-        if(!is_null($company_id) && is_numeric($company_id)){
-            if(is_numeric($permissions))
-                return $permissionClass->findByIdWithCompany($permissions, $this->getDefaultGuardName(), $company_id);
-            if(is_string($permissions))
-                return $permissionClass->findByNameWithCompany($permissions, $this->getDefaultGuardName());
-            if(is_array($permissions)){
-               return $permissionClass
-                ->where('company_id', $company_id)
-                ->whereIn('name', $permissions)
-                ->whereIn('guard_name', $this->getGuardNames())
-                ->get(); 
-            }
-
-        }
 
         if (is_numeric($permissions)) {
             return $permissionClass->findById($permissions, $this->getDefaultGuardName());

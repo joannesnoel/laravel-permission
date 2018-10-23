@@ -86,22 +86,7 @@ class Permission extends Model implements PermissionContract
     {
         $guardName = $guardName ?? Guard::getDefaultName(static::class);
 
-        $permission = static::getPermissions()->filter(function ($permission) use ($name, $guardName) {
-            return $permission->name === $name && $permission->guard_name === $guardName;
-        })->first();
-
-        if (! $permission) {
-            throw PermissionDoesNotExist::create($name, $guardName);
-        }
-
-        return $permission;
-    }
-
-    public static function findByNameWithCompany(int $name, $guardName = null, $company_id): PermissionContract
-    {
-        $guardName = $guardName ?? Guard::getDefaultName(static::class);
-
-        $permission = static::where('guard_name', $guardName)->where('name', $name)->where('company_id',$company_id)->first();
+        $permission = static::where('guard_name', $guardName)->where('name', $name)->first();
 
         if (! $permission) {
             throw PermissionDoesNotExist::create($name, $guardName);
@@ -124,22 +109,7 @@ class Permission extends Model implements PermissionContract
     {
         $guardName = $guardName ?? Guard::getDefaultName(static::class);
 
-        $permission = static::getPermissions()->filter(function ($permission) use ($id, $guardName) {
-            return $permission->id === $id && $permission->guard_name === $guardName;
-        })->first();
-
-        if (! $permission) {
-            throw PermissionDoesNotExist::withId($id, $guardName);
-        }
-
-        return $permission;
-    }
-
-    public static function findByIdWithCompany(int $id, $guardName = null, $company_id): PermissionContract
-    {
-        $guardName = $guardName ?? Guard::getDefaultName(static::class);
-
-        $permission = static::where('guard_name', $guardName)->where('id', $id)->where('company_id',$company_id)->first();
+        $permission = static::where('guard_name', $guardName)->where('id', $id)->first();
 
         if (! $permission) {
             throw PermissionDoesNotExist::withId($id, $guardName);
