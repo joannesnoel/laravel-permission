@@ -260,7 +260,7 @@ trait HasPermissions
      *
      * @return $this
      */
-    public function givePermissionTo(...$permissions, $company_id = null)
+    public function givePermissionTo($company_id, ...$permissions)
     {
         $permissions = collect($permissions)
             ->flatten()
@@ -301,11 +301,11 @@ trait HasPermissions
      *
      * @return $this
      */
-    public function syncPermissions(...$permissions)
+    public function syncPermissions($company_user, ...$permissions)
     {
         $this->permissions()->detach();
 
-        return $this->givePermissionTo($permissions);
+        return $this->givePermissionTo($company_user, $permissions);
     }
 
     /**
